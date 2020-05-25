@@ -13,7 +13,6 @@ const http = require('http').Server(app);// this calls in http module and links 
      useUnifiedTopology:true,
      useNewUrlParser:true,
  }); // connects mongoose to the uri
- app.set('view-engine', 'ejs');
  app.use(express.static(path.join(__dirname, '..', 'client', 'build')));/* path
   module is used to point to the directory for our client side.*/
  io.on('connection',(socket) =>{
