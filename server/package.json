@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "socket": "socket",
-    "start":"node app.js"
-
+    "start": "node app.js",
+    "start-dev": "nodemon ./app.js"
   },
   "repository": {
     "type": "git",
@@ -20,8 +20,17 @@
   ],
   "author": "chizoba chukwuoma",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "config": "^3.3.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.15",
+    "node-gyp-build": "^4.2.2",
+    "utf-8-validate": "^5.0.2"
+  },
   "devDependencies": {
+    "mongodb": "^3.5.7",
     "socket.io": "^2.3.0"
   }
 }
