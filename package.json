@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "socket": "socket",
-    "start": "node app.js",
-    "start-dev": "nodemon ./app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +22,7 @@
   "dependencies": {
     "bufferutil": "^4.0.1",
     "config": "^3.3.1",
+    "core-util-is": "^1.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.15",
