@@ -2,34 +2,41 @@
 
 const express = require("express"); // call in express
 const app = express(); //creates an express application
+
 //sets the template engine
 app.set('viewengine', 'hbs');
+// adds middleware to check status of the request-response cycle
+const morgan = require('morgan');
+app.use(morgan("dev"));
+
 // this calls in http module and links it to the app
-const http = require("http").Server(app); 
+const http = require("http").Server(app);
 const path = require("path"); // the path module is called
- // calls in socket and links http server to it
- const io = require("socket.io")(http);
- // adds dotenv to the app
- const dotenv= require("dotenv").config();
-const uri = process.env.MongoDB_URI; // creates uri that is stored as an environment variable
-const port = process.env.port||3000; // creates a port
+// calls in socket and links http server to it
+const io = require("socket.io")(http);
+// adds dotenv to the app
+const dotenv = require("dotenv")
+dotenv.config();
+ //imports port from env file
+const port = process.env.PORT || 3000; // creates a port
+const uri= process.env.MONGO_URI;
 const message = require("./server/message"); // requires the message.js file
 const mongoose = require("mongoose"); // calls in mongoose
-const options = {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  autoIndex: false, // Don't build indexes
-  poolSize: 10, // Maintain up to 10 socket connections
-  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-  family: 4, // Use IPv4, skip trying IPv6}//handles promises in the mongoose connection
-};
-mongoose.connect("uri", "options").then(
-    ()=>{}
+// db configuration 
 
-) // connects mongoose to the uri
+mongoose.connect(process.env.MONGO_URI,
+  { useNewUrlParser: true }
+  )  
+.then(
+  () => console.log('DB connected')) // connects mongoose to the uri
+
+const db = mongoose.connection;
+db.on('error',
+ console.error.bind(console,'connection:error'));
+ db.once('open', ()=>{
+   console.log(`DB connected on ${port}`)
+ });
+
 
 app.use(
   express.static(path.join(__dirname, "..", "client", "build"))

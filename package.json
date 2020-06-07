@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "hbs": "^4.1.1",
     "mongoose": "^5.9.15",
+    "morgan": "^1.10.0",
     "node-gyp-build": "^4.2.2",
     "utf-8-validate": "^5.0.2"
   },
