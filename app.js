@@ -11,31 +11,33 @@ app.use(morgan("dev"));
 
 // this calls in http module and links it to the app
 const http = require("http").Server(app);
-const path = require("path"); // the path module is called
-// calls in socket and links http server to it
+const path = require("path");
 const io = require("socket.io")(http);
 // adds dotenv to the app
 const dotenv = require("dotenv")
 dotenv.config();
- //imports port from env file
+//imports port from env file
 const port = process.env.PORT || 3000; // creates a port
-const uri= process.env.MONGO_URI;
-const message = require("./server/message"); // requires the message.js file
-const mongoose = require("mongoose"); // calls in mongoose
+const uri = process.env.MONGO_URI;
+const message = require("./models/message");
+const mongoose = require("mongoose");
 // db configuration 
 
 mongoose.connect(process.env.MONGO_URI,
-  { useNewUrlParser: true }
-  )  
-.then(
-  () => console.log('DB connected')) // connects mongoose to the uri
+  {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+  }
+)
+  .then(
+    () => console.log('DB connected')) // connects mongoose to the uri
 
 const db = mongoose.connection;
 db.on('error',
- console.error.bind(console,'connection:error'));
- db.once('open', ()=>{
-   console.log(`DB connected on ${port}`)
- });
+  console.error.bind(console, 'connection:error'));
+db.once('open', () => {
+  console.log(`DB connected on ${port}`)
+});
 
 
 app.use(

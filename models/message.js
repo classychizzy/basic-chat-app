@@ -6,4 +6,7 @@ const messageSchema = new mongoose.Schema ({
 }, {
     timestamps: true,
 });
+ const emailSchema = new mongoose.Schema({
+  email: String   
+ })
 module.exports = mongoose.model('Message', messageSchema);
