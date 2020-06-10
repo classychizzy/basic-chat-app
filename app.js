@@ -1,26 +1,40 @@
-// let's add dotenv to handle all environment variables in the app
+// all dependencies are called in here
 
-const express = require("express"); // call in express
+const express = require("express"); //
+const morgan = require('morgan');
+const path = require("path");
+const dotenv = require("dotenv")
+dotenv.config();// adds dot-env to the app
+const message = require("./models/message");
+const mongoose = require("mongoose");
 const app = express(); //creates an express application
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const errorHandler = require('errors');
+//modules for authentication
+const cors = require('cors')
+const session = require('express-session');
+const bodyParser = require('body-parser');
 
 //sets the template engine
 app.set('viewengine', 'hbs');
-// adds middleware to check status of the request-response cycle
-const morgan = require('morgan');
-app.use(morgan("dev"));
 
-// this calls in http module and links it to the app
-const http = require("http").Server(app);
-const path = require("path");
-const io = require("socket.io")(http);
-// adds dotenv to the app
-const dotenv = require("dotenv")
-dotenv.config();
+// app configuration
+app.use(cors);
+app.use(morgan("dev")); // sets morgan as the middleware to monitor requests
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+  secret: 'passport-chatapp', cookie: { maxAge: 6000 },
+  resave: false, saveUninitialized: false
+}))
+app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
+  module is used to point to the directory for our client side.*/
+
+
 //imports port from env file
 const port = process.env.PORT || 3000; // creates a port
 const uri = process.env.MONGO_URI;
-const message = require("./models/message");
-const mongoose = require("mongoose");
+
 // db configuration 
 
 mongoose.connect(process.env.MONGO_URI,
@@ -40,10 +54,6 @@ db.once('open', () => {
 });
 
 
-app.use(
-  express.static(path.join(__dirname, "..", "client", "build"))
-); /* path
-  module is used to point to the directory for our client side.*/
 
 io.on("connection", (socket) => {
   console.log("new user connected");
