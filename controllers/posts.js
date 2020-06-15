@@ -1,0 +1,1 @@
+// handles all posts responses

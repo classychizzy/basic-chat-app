@@ -1,5 +1,6 @@
 const jwt = require('express-jwt');
 
+//generates a token that would be transferred from client to the  req headers
 const getTokenFromHeaders = (req) =>{
     const { headers: {authorization}} = req;
 

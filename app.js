@@ -65,6 +65,7 @@ mongoose.set('debug', true);
 // models and routes
 const user = require('./models/users');
 const passport= require('./config/passport');
+app.use(require('./server/routes'));
 
 
 //error handlers and middleware
