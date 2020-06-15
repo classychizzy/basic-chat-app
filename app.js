@@ -11,8 +11,8 @@ const app = express(); //creates an express application
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const errorHandler = require('errors');
-//modules for authentication
-const cors = require('cors')
+//modules for authentication and routes
+const cors = require('cors');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
@@ -30,9 +30,16 @@ app.use(session({
 app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
   module is used to point to the directory for our client side.*/
 
+  
+  
+
 
 //imports port from env file
 const port = process.env.PORT || 3000; // creates a port
+app.listen(port,()=>{
+  console.log(`app is listening on ${port}`)
+});
+
 const uri = process.env.MONGO_URI;
 
 // db configuration 
@@ -52,7 +59,15 @@ db.on('error',
 db.once('open', () => {
   console.log(`DB connected on ${port}`)
 });
+  
+mongoose.set('debug', true);
 
+// models and routes
+const user = require('./models/users');
+const passport= require('./config/passport');
+
+
+//error handlers and middleware
 
 
 io.on("connection", (socket) => {
