@@ -10,11 +10,19 @@ const mongoose = require("mongoose");
 const app = express(); //creates an express application
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
-const errorHandler = require('errors');
+
 //modules for authentication and routes
 const cors = require('cors');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const errorHandler = require('errorhandler');
+
+
+// models and routes
+const user = require('./models/users');
+const passport = require('./config/passport');
+const Routes = require('./server/routes');
+
 
 //sets the template engine
 app.set('viewengine', 'hbs');
@@ -30,28 +38,37 @@ app.use(session({
 app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
   module is used to point to the directory for our client side.*/
 
-  
-  
 
 
 //imports port from env file
-const port = process.env.PORT || 3000; // creates a port
-app.listen(port,()=>{
-  console.log(`app is listening on ${port}`)
-});
+const port = process.env.PORT || 27017; // creates a port
 
 const uri = process.env.MONGO_URI;
-
 // db configuration 
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  autoIndex: false, // Don't build indexes
+  poolSize: 10, // Maintain up to 10 socket connections
+  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  family: 4 // Use IPv4, skip trying IPv6
+};
 
-mongoose.connect(process.env.MONGO_URI,
-  {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  }
-)
-  .then(
-    () => console.log('DB connected')) // connects mongoose to the uri
+  mongoose.connect(uri ||"mongodb://localhost:27000/chatapp", options)
+    .then(
+      () => console.log('DB connected')
+      ).catch(error =>{
+        console.log(error)
+      }); // connects mongoose to the uri
+
+
+
+    
+
+
 
 const db = mongoose.connection;
 db.on('error',
@@ -59,16 +76,14 @@ db.on('error',
 db.once('open', () => {
   console.log(`DB connected on ${port}`)
 });
-  
+
 mongoose.set('debug', true);
 
-// models and routes
-const user = require('./models/users');
-const passport= require('./config/passport');
-app.use(require('./server/routes'));
 
 
 //error handlers and middleware
+app.use('/', Routes);
+
 
 
 io.on("connection", (socket) => {
@@ -94,4 +109,11 @@ io.on("connection", (socket) => {
       });
     });
   });
+});
+
+
+// this is line is important for local host to work
+
+app.listen(port, () => {
+  console.log(`app is listening on ${port}`)
 });
