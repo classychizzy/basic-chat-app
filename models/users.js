@@ -10,7 +10,7 @@ const UsersSchema = new mongoose.Schema({
     hash: String,
     salt: String
 })
-mongoose.model('users', UsersSchema);
+ module.exports= mongoose.model('users', UsersSchema);
 
 // model definition and validation
 UsersSchema.method.setPassword = (password) => {
