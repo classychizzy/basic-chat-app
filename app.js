@@ -30,9 +30,10 @@ app.set('viewengine', 'hbs');
 // app configuration
 app.use(cors);
 app.use(morgan("dev")); // sets morgan as the middleware to monitor requests
+app.use(bodyParser.json);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
-  secret: 'passport-chatapp', cookie: { maxAge: 6000 },
+  secret: 'secret', cookie: { maxAge: 6000 },
   resave: false, saveUninitialized: false
 }))
 app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
@@ -41,7 +42,7 @@ app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
 
 
 //imports port from env file
-const port = process.env.PORT || 27017; // creates a port
+const port = process.env.PORT || 8080; // creates a port
 
 const uri = process.env.MONGO_URI;
 // db configuration 
@@ -57,7 +58,7 @@ const options = {
   family: 4 // Use IPv4, skip trying IPv6
 };
 
-  mongoose.connect(uri ||"mongodb://localhost:27000/chatapp", options)
+  mongoose.connect(uri ||"mongodb://localhost/chatapp", options)
     .then(
       () => console.log('DB connected')
       ).catch(error =>{
@@ -74,7 +75,7 @@ const db = mongoose.connection;
 db.on('error',
   console.error.bind(console, 'connection:error'));
 db.once('open', () => {
-  console.log(`DB connected on ${port}`)
+  console.log(`DB connected on ${27017}`)
 });
 
 mongoose.set('debug', true);
@@ -85,7 +86,7 @@ mongoose.set('debug', true);
 app.use('/', Routes);
 
 
-
+/*
 io.on("connection", (socket) => {
   console.log("new user connected");
   //listen on change username
@@ -110,7 +111,7 @@ io.on("connection", (socket) => {
     });
   });
 });
-
+*/
 
 // this is line is important for local host to work
 

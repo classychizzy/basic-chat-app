@@ -22,5 +22,5 @@ const getTokenFromHeaders = (req) =>{
          getToken: getTokenFromHeaders,
          credentialsRequired: false,
      }),
- } 
+ };
   module.exports = auth;

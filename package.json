@@ -28,14 +28,15 @@
     "errorhandler": "^1.5.1",
     "errors": "^0.3.0",
     "express": "^4.17.1",
-    "express-jwt": "^5.3.3",
+    "express-jwt": "^6.0.0",
     "express-session": "^1.17.1",
     "hbs": "^4.1.1",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.19",
+    "mongoose": "^5.9.22",
     "morgan": "^1.10.0",
     "node-gyp-build": "^4.2.2",
+    "npm-check-updates": "^7.0.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "unique": "0.0.1",
@@ -43,7 +44,7 @@
     "validator": "^13.1.1"
   },
   "devDependencies": {
-    "mongodb": "^3.5.7",
+    "mongodb": "^3.5.9",
     "socket.io": "^2.3.0"
   }
 }
