@@ -11,40 +11,55 @@ const app = express(); //creates an express application
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
-//modules for authentication and routes
-const cors = require('cors');
+//modules for authentication 
+const Passport = require('passport')
+const crypto = require('crypto');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const errorHandler = require('errorhandler');
 
+// store for session storage
+ const MongoStore = require('connect-mongo')(session);
 
 // models and routes
 const user = require('./models/users');
-const passport = require('./config/passport');
 const Routes = require('./server/routes');
+const passport = require("passport");
 
+const sessionStore = new MongoStore({
+  mongooseConnection: mongoose.connection,
+  collections: 'sessions'
+});
 
 //sets the template engine
 app.set('viewengine', 'hbs');
 
 // app configuration
-app.use(cors);
 app.use(morgan("dev")); // sets morgan as the middleware to monitor requests
 app.use(bodyParser.json);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
-  secret: 'secret', cookie: { maxAge: 6000 },
-  resave: false, saveUninitialized: false
-}))
+  secret: 'secret', 
+  resave: false, 
+  saveUninitialized: false, 
+  store: sessionStore, // selects store for connecting session to mongo
+  cookie:{
+    maxAge: 1000 * 60 * 60 *24// equals one day
+  }
+}));
+
+
+
 app.use(express.static(path.join(__dirname, "..", "client", "build"))); /* path
   module is used to point to the directory for our client side.*/
 
 
 
-//imports port from env file
+//sets the required environment variablesdb
 const port = process.env.PORT || 8080; // creates a port
-
+const dbPort = 27017;
 const uri = process.env.MONGO_URI;
+
 // db configuration 
 const options = {
   useNewUrlParser: true,
@@ -58,18 +73,12 @@ const options = {
   family: 4 // Use IPv4, skip trying IPv6
 };
 
-  mongoose.connect(uri ||"mongodb://localhost/chatapp", options)
+  mongoose.connect(uri, options)
     .then(
       () => console.log('DB connected')
       ).catch(error =>{
         console.log(error)
       }); // connects mongoose to the uri
-
-
-
-    
-
-
 
 const db = mongoose.connection;
 db.on('error',
@@ -82,10 +91,13 @@ mongoose.set('debug', true);
 
 
 
-//error handlers and middleware
+//error handlers and middleware error handler must come lastn
 app.use('/', Routes);
-
-
+// authentication routing
+app.use(passport.initialize());
+app.use(passport.session());
+//requires the config file which holds the callbacks for passport
+require('./config/passport')(Passport);
 /*
 io.on("connection", (socket) => {
   console.log("new user connected");
@@ -115,6 +127,9 @@ io.on("connection", (socket) => {
 
 // this is line is important for local host to work
 
+app.get('/', (req, res) => {
+  console.log(" morgan is working")
+}) ;
 app.listen(port, () => {
   console.log(`app is listening on ${port}`)
 });

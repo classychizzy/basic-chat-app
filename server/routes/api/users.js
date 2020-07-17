@@ -7,6 +7,7 @@ const router = require('express').Router();
 const auth = require('../auth');
 const Users = mongoose.model('users');
 // an optional route is created to handle new model creation(register new users)
+//log-in routes
 router.post('/', auth.optional, (req, res, next)=> {
     const { body: { user } } = req;
   

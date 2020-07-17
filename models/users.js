@@ -2,44 +2,48 @@
 
 const mongoose = require('mongoose');
 const JWT = require('jsonwebtoken');
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 //set up for the user schema
 
-const UsersSchema = new mongoose.Schema({
-    email: String,
-    hash: String,
-    salt: String
+const userSchema = new mongoose.Schema({
+    name: String,
+    emailAddress: {
+        type: String, 
+        required: true,
+        unique: true},
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    image: String
+}, {timestamps: true});
+ 
+// authentication of password using presave hooks
+userSchema.pre('save', function (next) {
+    var user = this;
+    if (!user.isModified('password')) {return next()};
+    bcrypt.hash(user.password,10).then((hashedPassword) => {
+        user.password = hashedPassword;
+        next();
+    })
+}, // error handling
+function (err) {
+    next(err)
 })
- module.exports= mongoose.model('users', UsersSchema);
 
-// model definition and validation
-UsersSchema.method.setPassword = (password) => {
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 512, 'sha512').toString("hex")
-};
-
-UsersSchema.method.validatePassword = (password) => {
-    const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 512, 'sha512').toString('hex')
-    return this.hash === hash
-};
-
-UsersSchema.method.generateJWT = () => {
-    const today = newDate();
-    const expirationDate = newDate(today);
-    expirationDate.setDate(today.getDate() + 60);
-
-    return JWT.sign({
-        email: this.email,
-        id: this._id,
-        exp: parseInt(expirationDate.getTime() / 1000, 10),
-    }, 'secret');
+userSchema.methods.comparePassword=function(candidatePassword,next){    bcrypt.compare(candidatePassword,this.password,function(err,isMatch){
+    if(err) return next(err);
+    next(null,isMatch)
+})
 }
 
-UsersSchema.methods.toAuthJSON = function () {
-    return {
-        _id: this._id,
-        email: this.email,
-        token: this.generateJWT(),
-    };
-};
+// exports the new user model
+ module.exports= mongoose.model('users', userSchema);
+
+
 
