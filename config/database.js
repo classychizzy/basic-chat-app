@@ -4,7 +4,11 @@ require('dotenv').config
 
 /* ---- DATABASE, connection to mongodb atlas ---- */
 const userSchema = require('../models/users')
-const User = mongoose.model('user', userSchema, 'user')
+const connection = mongoose.createConnection(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+const User = connection.model('user', userSchema, 'user')
 
 async function createUser (username) {
   return new User({
@@ -32,3 +36,5 @@ async function findUser (username) {
   console.log(user)
   process.exit(0)
 })()
+
+module.exports = connection

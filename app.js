@@ -85,7 +85,7 @@ db.once('open', () => {
 mongoose.set('debug', true)
 
 // error handlers and middleware error handler must come lastn
-app.use('/', Routes)
+
 
 // requires the config file which holds the callbacks for passport
 require('./config/passport')(Passport)

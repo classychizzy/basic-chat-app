@@ -6,7 +6,7 @@ const connection = require('./database')
 const validPassword = require('./lib/passportUtils').validPassword
 
 // the model user is brought into the model as we wish to use passport for authentication
-const User = connection.models.User
+const User = connection.model.User
 
 // custom fields are created so passport can recognise the input from the request body
 const customFields = {
@@ -33,6 +33,7 @@ const verifyCallback = (username, password, done) => {
       done(err)
     })
 
+  // eslint-disable-next-line no-unused-vars
   const strategy = new LocalStrategy(customFields, verifyCallback)
   passport.use(strategy)
 
@@ -47,4 +48,7 @@ const verifyCallback = (username, password, done) => {
       })
       .catch(err => done(err))
   })
+}
+module.exports = function (app, passport) {
+
 }
