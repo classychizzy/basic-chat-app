@@ -4,6 +4,7 @@ const router = require('express').Router()
 const passport = require('passport')
 const genPassword = require('../config/lib/passportUtils').genPassword
 const connection = require('../config/database')
+const { Router } = require('express')
 const User = connection.model.User
 
 /* -- Post routes ---   */
@@ -27,3 +28,5 @@ router.post('/register', (req, res, next) => {
     })
   res.redirect('/login')
 })
+
+module.exports = Router
