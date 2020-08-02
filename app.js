@@ -39,6 +39,10 @@ app.engine('hbs', exphbs({
   extname: '.hbs'
 }))
 app.set('viewengine', 'handlebars')
+// we need to create routes for different pages on the browser
+app.get('/', (req, res) => {
+  res.render('home')
+})
 
 // app configuration
 app.use(morgan('dev')) // sets morgan as the middleware to monitor requests
@@ -54,8 +58,8 @@ app.use(session({
   }
 }))
 
-app.use(express.static(path.join(__dirname, '..', 'client', 'build'))) /* path
-  module is used to point to the directory for our client side. */
+app.use('/', express.static(path.join(__dirname, '/views'))) /* path
+  module is used to point to the directory for our client side i.e the template engine. */
 
 // sets the required environment variablesdb
 const port = process.env.PORT || 8080 // creates a port
@@ -136,7 +140,7 @@ io.on("connection", (socket) => {
 app.get('/', (req, res) => {
   res.render('home')
 })
-
-app.listen(port, () => {
+// this is used instead of app.listen cause were working with socket.io
+http.listen(port, (req, res) => {
   console.log(`app is listening on ${port}`)
 })
