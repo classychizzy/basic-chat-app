@@ -47,6 +47,6 @@
   },
   "devDependencies": {
     "mongodb": "^3.5.9",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.5.0"
   }
 }
